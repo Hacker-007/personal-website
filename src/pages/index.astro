@@ -1,11 +1,126 @@
 ---
-import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/PrimaryLayout.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import LinkedInIcon from "../components/icons/LinkedInIcon.astro";
+import GitHubIcon from "../components/icons/GitHubIcon.astro";
+import EmailIcon from "../components/icons/EmailIcon.astro";
+import SunIcon from "../components/icons/SunIcon.astro";
+import SlashIcon from "../components/icons/SlashIcon.astro";
+
+import BlogEntry from "../components/BlogEntry.astro";
+import RightArrowIcon from "../components/icons/RightArrowIcon.astro";
+import PlayIcon from "../components/icons/PlayIcon.astro";
 ---
 
 <Layout>
-  <Welcome />
+  <div class="flex justify-between items-start">
+    <div>
+      <h1 class="text-3xl font-semibold">Revanth Pothukuchi</h1>
+      <p class="text-xl">MIT &#39;25, CS</p>
+      <div class="pt-2 flex items-center gap-5">
+        <a aria-label="LinkedIn" href="linkedin.com/in/revanthpothukuchi">
+          <LinkedInIcon class="size-6" />
+        </a>
+        <a aria-label="GitHub" href="github.com/Hacker-007">
+          <GitHubIcon class="size-6" />
+        </a>
+        <a aria-label="Email" href="mailto:revanthp@mit.edu">
+          <EmailIcon class="size-6" />
+        </a>
+      </div>
+    </div>
+    <nav class="flex items-center gap-10">
+      <button><SunIcon class="size-6" /></button>
+      <a href="/projects" class="text-xl">Projects</a>
+      <a href="/blog" class="text-xl">Blog</a>
+      <a href="/resume" class="text-xl">Resume</a>
+    </nav>
+  </div>
+  <main>
+    <div class="pt-14"></div>
+    <section>
+      <h2 class="text-xl max-w-4xl">
+        A senior at MIT studying computer science. Currently looking for
+        full-time opportunities. Previously was a consultant engineer at
+        ImaginationLand, algorithmic quantitative intern at Citi, technical
+        co-founder of GoPhotos, and security researcher at MIT CSAIL.
+      </h2>
+    </section>
+    <div class="pt-12"></div>
+    <section class="flex gap-7">
+      <h3 class="text-xl font-medium">Interests</h3>
+      <div class="flex gap-1">
+        <a href="/projects?q=compilers" class="text-xl">Compilers</a>
+        <SlashIcon class="size-6" />
+        <a href="/projects?q=security" class="text-xl">Security</a>
+        <SlashIcon class="size-6" />
+        <a href="/projects?q=distributedSystems" class="text-xl"
+          >Distributed Systems</a
+        >
+        <SlashIcon class="size-6" />
+        <a href="/projects?q=performanceEngineering" class="text-xl"
+          >Performance Engineering</a
+        >
+        <SlashIcon class="size-6" />
+        <a href="/projects?q=aiML" class="text-xl">AI &amp; ML</a>
+      </div>
+    </section>
+    <div class="pt-20"></div>
+    <div class="flex justify-between">
+      <section>
+        <h3 class="text-xl font-medium">Recent Blogs</h3>
+        <div class="pt-5"></div>
+        <div class="flex flex-col gap-10">
+          <BlogEntry />
+          <BlogEntry />
+        </div>
+        <div class="pt-5"></div>
+        <a
+          aria-label="All blogs"
+          href="/blogs"
+          class="flex gap-1 items-center font-medium"
+        >
+          <span>See more</span>
+          <span><RightArrowIcon class="size-6" /></span>
+        </a>
+      </section>
+      <div class="flex gap-7">
+        <section class="w-full max-w-lg flex flex-col gap-1">
+          <div class="flex-grow rounded-sm bg-[#FAF4ED]"></div>
+          <div class="flex justify-between items-center">
+            <p class="max-w-md">
+              a partial implementation of an asynchronous, multi-threaded, and
+              multiplexed Redis server
+            </p>
+            <button class="flex justify-center items-center gap-1 font-medium">
+              <span>explore</span>
+              <span><RightArrowIcon class="size-4" /></span>
+            </button>
+          </div>
+        </section>
+        <section class="w-full max-w-lg flex flex-col gap-1">
+          <div class="flex-grow rounded-sm bg-[#FAF4ED] relative">
+            <div class="absolute bottom-4 right-4">
+              <button
+                class="h-min w-min flex gap-1 items-center p-2.5 rounded-md bg-[#DFDAD9]"
+              >
+                <p class="text-sm font-medium">Run</p>
+                <span><PlayIcon class="size-4" /></span>
+              </button>
+            </div>
+          </div>
+          <div class="flex justify-between items-center">
+            <p class="max-w-md">
+              a compiler for the Envious programming language with compilation
+              to LLVM and basic type inference
+            </p>
+            <button class="flex justify-center items-center gap-1 font-medium">
+              <span>explore</span>
+              <span><RightArrowIcon class="size-4" /></span>
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
 </Layout>
