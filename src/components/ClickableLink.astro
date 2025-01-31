@@ -1,0 +1,17 @@
+---
+const { class: className, href, ...rest } = Astro.props;
+---
+
+<a
+  href={href}
+  class:list={[
+    "border-b",
+    "border-[#334155]",
+    "text-[#334155]",
+    "cursor-pointer",
+    className,
+  ]}
+  {...rest}
+>
+  <slot />
+</a>
