@@ -129,7 +129,7 @@ export default function MobileNavigation({
             initial="initial"
             animate="animate"
             exit="exit"
-            className="fixed right-0 top-0 flex w-screen origin-top-right flex-col items-end gap-7 bg-[#f2e9e1]"
+            className="fixed right-0 top-0 flex w-screen origin-top-right flex-col items-end gap-7 bg-[#F2E9E1]"
           >
             <motion.button
               key="close"
@@ -137,12 +137,12 @@ export default function MobileNavigation({
               className="cursor-pointer px-6 pt-6"
               onClick={() => setIsOpen(false)}
             >
-              <CrossIcon className="size-6 text-[#575279]" />
+              <CrossIcon className="size-6" />
             </motion.button>
             <motion.div
               key="links"
               variants={linkContainerAnimation}
-              className="flex flex-col gap-4 overflow-hidden px-6 text-right text-[#575279]"
+              className="flex flex-col gap-4 overflow-hidden px-6 text-right"
             >
               <MobileNavigationLink ariaLabel="Project Page" href="/projects">
                 Projects

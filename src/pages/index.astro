@@ -3,17 +3,22 @@ import Layout from "../layouts/PrimaryLayout.astro";
 
 import ClickableLink from "../components/ClickableLink.astro";
 import MobileNavigation from "../components/MobileNavigation";
+import SlashIcon from "../components/icons/SlashIcon.astro";
+import RightArrowIcon from "../components/icons/RightArrowIcon.astro";
+import PlayIcon from "../components/icons/PlayIcon.astro";
+
+import BlogEntry from "../components/BlogEntry.astro";
 ---
 
 <Layout>
-  <div class="px-6 pt-6">
+  <div class="overflow-scroll p-6">
     <header class="flex items-start justify-between">
       <section>
         <div>
           <h1 class="text-xl font-semibold">Revanth Pothukuchi</h1>
           <p>MIT &#39;25, CS</p>
         </div>
-        <div class="space-x-3 pt-2">
+        <div class="flex gap-3 pt-2">
           <ClickableLink
             href="https://www.linkedin.com/in/revanthpothukuchi"
             aria-label="LinkedIn Page"
@@ -31,7 +36,64 @@ import MobileNavigation from "../components/MobileNavigation";
           </ClickableLink>
         </div>
       </section>
-      <MobileNavigation client:load />
+      <MobileNavigation className="md:hidden" client:visible />
     </header>
+    <section class="pt-14 font-light">
+      <h2>
+        A senior at MIT studying computer science. Currently looking for
+        full-time opportunities. Previously a consultant engineer at
+        ImaginationLand, algorithmic quantitative intern at Citi, technical
+        co-founder of a stealth startup, and security researcher at MIT CSAIL.
+      </h2>
+    </section>
+    <section class="pt-12">
+      <header class="font-medium">Interests</header>
+      <div class="flex flex-wrap items-center gap-1">
+        <p>Compilers</p>
+        <SlashIcon class="size-3" />
+        <p>Security</p>
+        <SlashIcon class="size-3" />
+        <p>Distributed Systems</p>
+        <SlashIcon class="size-3" />
+        <p>Performance Engineering</p>
+        <SlashIcon class="size-3" />
+        <p>AI &amp; ML</p>
+      </div>
+    </section>
+    <section class="pt-12">
+      <div class="aspect-square w-full rounded-md bg-[#FAF4ED]"></div>
+      <p class="pt-2 text-sm">
+        a partial implementation of an asynchronous, multi-threaded, and
+        multiplexed Redis server
+      </p>
+      <button class="flex items-center gap-1 pt-1">
+        <span class="text-sm font-medium">explore</span>
+        <span><RightArrowIcon class="size-4" /></span>
+      </button>
+    </section>
+    <section class="pt-10">
+      <div class="relative aspect-square w-full rounded-md bg-[#FAF4ED]">
+        <button class="absolute bottom-2 right-2 flex gap-1 items-center bg-[#DFDAD9] px-3 py-2 rounded-md">
+          <span class="font-semibold text-sm">Run</span>
+          <span><PlayIcon class="size-3" /></span>
+        </button>
+      </div>
+      <p class="pt-2 text-sm">
+        a compiler for the Envious programming language with compilation to LLVM
+        and basic type inference
+      </p>
+      <button class="flex items-center gap-1 pt-1">
+        <span class="text-sm font-medium">explore</span>
+        <span><RightArrowIcon class="size-4" /></span>
+      </button>
+    </section>
+    <section class="space-y-5 pt-10">
+      <h3 class="font-medium">Recent Blogs</h3>
+      <BlogEntry />
+      <div class="h-0.5 w-full bg-gray-200" />
+      <BlogEntry />
+      <div class="h-0.5 w-full bg-gray-200" />
+      <BlogEntry />
+    </section>
   </div>
 </Layout>
