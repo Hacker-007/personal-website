@@ -1,8 +1,10 @@
 ---
+import Layout from '../layouts/Layout.astro'
+
 import HorizontalDivider from '../components/HorizontalDivider.astro'
 import InterestPill from '../components/InterestPill.astro'
 import Link from '../components/Link.astro'
-import Layout from '../layouts/Layout.astro'
+import { RedisTerminal } from '../components/RedisTerminal'
 ---
 
 <Layout>
@@ -64,6 +66,8 @@ import Layout from '../layouts/Layout.astro'
 
     <HorizontalDivider />
 
-    <section></section>
+    <section class="flex items-center justify-between">
+      <RedisTerminal client:load />
+    </section>
   </div>
 </Layout>
