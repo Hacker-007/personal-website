@@ -6,6 +6,7 @@ import InterestPill from '../components/InterestPill.astro'
 import Link from '../components/Link.astro'
 import { RedisTerminal } from '../components/RedisTerminal'
 import { EnviousEditor } from '../components/EnviousEditor'
+import InteractiveProject from '../components/InteractiveProject.astro'
 ---
 
 <Layout>
@@ -41,8 +42,7 @@ import { EnviousEditor } from '../components/EnviousEditor'
 
     <section class="mt-12 max-w-2xl text-[15px]">
       <h2 class="text-muted leading-relaxed">
-        Member of technical staff at Nexus. MIT Class of 2025 with Bachelor's of
-        Science in Computer Science. Previously an algorithmic quantitative
+        Member of technical staff at Nexus. Previously an algorithmic quantitative
         intern at Citi, technical co-founder of a stealth startup, and security
         researcher at MIT CSAIL.
       </h2>
@@ -53,7 +53,7 @@ import { EnviousEditor } from '../components/EnviousEditor'
         Interests
       </h3>
       <div class="mt-3 flex flex-wrap items-center gap-2">
-        <InterestPill href="/projects?tags=compilers">Compiler</InterestPill>
+        <InterestPill href="/projects?tags=compilers">Compilers</InterestPill>
         <InterestPill href="/projects?tags=security">Security</InterestPill>
         <InterestPill href="/projects?tags=distributed-systems">
           Distributed Systems
@@ -67,9 +67,27 @@ import { EnviousEditor } from '../components/EnviousEditor'
 
     <HorizontalDivider />
 
-    <section class="flex items-center justify-between gap-5">
-      <RedisTerminal client:load />
-      <EnviousEditor client:load />
+    <section class="flex items-start justify-between gap-5">
+      <div class="flex-1">
+        <InteractiveProject
+          id="redis"
+          title="Redis Server"
+          description="A partial implementation of an asynchronous, multi-threaded, and multiplexed Redis server"
+          tags={['Distributed Systems', 'Performance Engineering']}
+        >
+          <RedisTerminal client:load />
+        </InteractiveProject>
+      </div>
+      <div class="flex-1">
+        <InteractiveProject
+          id="envious"
+          title="Envious"
+          description="A compiler for the Envious programming language with compilation to LLVM and basic type inference"
+          tags={['Compiler']}
+        >
+          <EnviousEditor client:load />
+        </InteractiveProject>
+      </div>
     </section>
   </div>
 </Layout>
