@@ -5,6 +5,7 @@ import HorizontalDivider from '../components/HorizontalDivider.astro'
 import InterestPill from '../components/InterestPill.astro'
 import Link from '../components/Link.astro'
 import { RedisTerminal } from '../components/RedisTerminal'
+import { EnviousEditor } from '../components/EnviousEditor'
 ---
 
 <Layout>
@@ -66,8 +67,9 @@ import { RedisTerminal } from '../components/RedisTerminal'
 
     <HorizontalDivider />
 
-    <section class="flex items-center justify-between">
+    <section class="flex items-center justify-between gap-5">
       <RedisTerminal client:load />
+      <EnviousEditor client:load />
     </section>
   </div>
 </Layout>
