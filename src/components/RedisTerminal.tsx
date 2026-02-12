@@ -21,16 +21,10 @@ export function RedisTerminal() {
   }
 
   return (
-    <div className="border-border flex h-80 w-full flex-col overflow-hidden rounded-md border font-mono">
+    <div className="border-border hover:border-border-hover flex h-80 w-full flex-col overflow-hidden rounded-xs border font-mono transition-colors duration-150">
       {/* Terminal Header */}
       <div className="border-border flex shrink-0 items-center border-b bg-[#0e0e14] px-3 py-2.5">
-        <div className="flex items-center gap-1.5">
-          <span className="bg-danger size-2 rounded-full" />
-          <span className="size-2 rounded-full bg-[#e0af68]" />
-          <span className="bg-success size-2 rounded-full" />
-        </div>
-        <span className="text-muted flex-1 text-center text-xs">redis-cli</span>
-        <InteractiveIndicator />
+        <span className="text-muted flex-1 text-sm">redis-cli</span>
       </div>
 
       {/* Terminal Body */}
@@ -41,15 +35,6 @@ export function RedisTerminal() {
         <CommandInput executeCommand={executeCommand} />
       </div>
     </div>
-  )
-}
-
-function InteractiveIndicator() {
-  return (
-    <span className="border-border text-muted flex items-center gap-1.5 rounded-full border px-2 py-1 text-xs">
-      <span className="bg-success size-1.5 rounded-full" />
-      interactive
-    </span>
   )
 }
 
@@ -68,7 +53,7 @@ function SubmittedCommand({ command, outputLines }: CommandSubmission) {
       {/* Command Output */}
       <div className="border-l-accent/10 mt-1 border-l-2 pl-3">
         {outputLines.map((line, i) => (
-          <p key={i} className="text-muted text-sm">
+          <p key={i} className="text-muted">
             {line}
           </p>
         ))}
@@ -97,7 +82,7 @@ function CommandInput({ executeCommand }: CommandInputProps) {
         </span>
 
         <input
-          className="text-text caret-accent w-full border-none bg-transparent text-sm outline-none focus:border-none focus:outline-none"
+          className="text-text caret-accent w-full border-none bg-transparent outline-none focus:border-none focus:outline-none"
           placeholder="Type a command..."
           value={commandInput}
           onChange={e => setCommandInput(e.currentTarget.value)}
