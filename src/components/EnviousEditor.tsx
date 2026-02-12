@@ -1,33 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
-import { codeToHtml, type ShikiTransformer } from 'shiki'
 
-const removeItalicsTransformer: ShikiTransformer = {
-  span(node) {
-    if (node.properties.style && typeof node.properties.style === 'string') {
-      node.properties.style = node.properties.style.replace(
-        /font-style:\s*italic;?/g,
-        ''
-      )
-    }
-  },
+import { renderHighlightedCode } from '../utils/shiki'
+
+interface EditorProps {
+  defaultCode: string
+  renderedDefaultCode: string
 }
 
-const defaultCode = `fn fibonacci(n: Int) -> Int {
-  if n <= 1 {
-    return n
-  }
-
-  let a = fibonacci(n - 1)
-  let b = fibonacci(n - 2)
-  return a + b
-}
-
-let result = fibonacci(10)
-print(result)`
-
-export function EnviousEditor() {
+export function EnviousEditor({
+  defaultCode,
+  renderedDefaultCode,
+}: EditorProps) {
   const [code, setCode] = useState(defaultCode)
-  const [highlightedHtml, setHighlightedHtml] = useState('')
+  const [highlightedHtml, setHighlightedHtml] = useState(renderedDefaultCode)
   const [output, setOutput] = useState<string | null>(null)
   const [isRunning, setIsRunning] = useState(false)
   const [scrollPos, setScrollPos] = useState({ top: 0, left: 0 })
@@ -37,13 +22,7 @@ export function EnviousEditor() {
   const lineCount = lines.length
 
   useEffect(() => {
-    codeToHtml(code, {
-      lang: 'rust',
-      theme: 'catppuccin-mocha',
-      transformers: [removeItalicsTransformer],
-    }).then(html => {
-      setHighlightedHtml(html)
-    })
+    renderHighlightedCode(code).then(setHighlightedHtml)
   }, [code])
 
   function handleScroll(e: React.UIEvent<HTMLTextAreaElement>) {
@@ -123,6 +102,7 @@ export function EnviousEditor() {
             onScroll={handleScroll}
             onKeyDown={handleKeyDown}
             spellCheck={false}
+            autoComplete="off"
             className="caret-accent absolute inset-0 resize-none overflow-auto overscroll-contain border-none bg-transparent p-2 pl-3 font-mono text-sm leading-5 text-transparent outline-none"
           />
         </div>

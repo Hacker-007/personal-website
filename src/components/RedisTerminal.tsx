@@ -34,8 +34,12 @@ export function RedisTerminal() {
 
       {/* Terminal Body */}
       <div className="bg-surface-1 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4">
-        {commands.map(({ command, outputLines }) => (
-          <SubmittedCommand command={command} outputLines={outputLines} />
+        {commands.map(({ command, outputLines }, i) => (
+          <SubmittedCommand
+            key={i}
+            command={command}
+            outputLines={outputLines}
+          />
         ))}
         <CommandInput executeCommand={executeCommand} />
       </div>
