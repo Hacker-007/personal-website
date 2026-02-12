@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { renderHighlightedCode } from '../utils/shiki'
-
 interface EditorProps {
   defaultCode: string
   renderedDefaultCode: string
@@ -11,18 +9,42 @@ export function EnviousEditor({
   defaultCode,
   renderedDefaultCode,
 }: EditorProps) {
+  const isFirstRender = useRef(true)
   const [code, setCode] = useState(defaultCode)
   const [highlightedHtml, setHighlightedHtml] = useState(renderedDefaultCode)
   const [output, setOutput] = useState<string | null>(null)
   const [isRunning, setIsRunning] = useState(false)
   const [scrollPos, setScrollPos] = useState({ top: 0, left: 0 })
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const workerRef = useRef<Worker | null>(null)
 
   const lines = code.split('\n')
   const lineCount = lines.length
 
+  // Start a worker thread to highlight the code.
   useEffect(() => {
-    renderHighlightedCode(code).then(setHighlightedHtml)
+    workerRef.current = new Worker(
+      new URL('../workers/shiki.worker.ts', import.meta.url),
+      { type: 'module' }
+    )
+
+    workerRef.current.onmessage = e => {
+      setHighlightedHtml(e.data)
+    }
+
+    return () => {
+      workerRef.current?.terminate()
+    }
+  }, [])
+
+  // Syntax highlight the current code.
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+
+    workerRef.current?.postMessage(code)
   }, [code])
 
   function handleScroll(e: React.UIEvent<HTMLTextAreaElement>) {
@@ -55,7 +77,7 @@ export function EnviousEditor({
       // TODO: execute `code` on API
       setOutput('error: the editor is under construction')
       setIsRunning(false)
-    }, 600)
+    }, 0)
   }
 
   return (
