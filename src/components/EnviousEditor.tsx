@@ -96,6 +96,7 @@ export function EnviousEditor({
 
           {/* Transparent Editor Body */}
           <textarea
+            aria-label="Envious code editor"
             ref={textareaRef}
             value={code}
             onChange={e => setCode(e.target.value)}
@@ -133,6 +134,7 @@ export function EnviousEditor({
                 <span className="font-mono text-sm">{output}</span>
               </div>
               <button
+                aria-label="close output panel button"
                 onClick={() => setOutput(null)}
                 className="text-muted hover:text-text hover:bg-text/10 -m-1 cursor-pointer rounded-full border-none bg-transparent p-1 transition-colors"
               >

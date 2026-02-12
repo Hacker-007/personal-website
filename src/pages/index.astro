@@ -55,18 +55,19 @@ const renderedCode = await renderHighlightedCode(defaultCode)
       </nav>
     </header>
 
-    <section class="mt-12 max-w-2xl">
+    <main class="mt-12 max-w-2xl">
       <h2 class="text-muted leading-relaxed">
         Member of Technical Staff at Nexus. Previously, an algorithmic
         quantitative intern at Citi, technical co-founder of a startup, and
         security researcher at MIT CSAIL.
       </h2>
-    </section>
+    </main>
 
     <section class="mt-20 flex items-start justify-between gap-10">
       <div class="flex-1">
         <InteractiveProject
           id="redis"
+          ariaLabel='go to the redis server project'
           title="Redis Server"
           description="A partial implementation of an asynchronous, multi-threaded, and multiplexed Redis server."
         >
@@ -76,6 +77,7 @@ const renderedCode = await renderHighlightedCode(defaultCode)
       <div class="flex-1">
         <InteractiveProject
           id="envious"
+          ariaLabel='go to the envious compiler project'
           title="Envious"
           description="An AOT compiler for a custom language with a LLVM backend and Hindley-Milner type inference."
         >

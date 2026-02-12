@@ -1,12 +1,13 @@
 ---
 interface Props {
   id: string
+  ariaLabel: string
   title: string
   description: string
   children: unknown
 }
 
-const { id, title, description } = Astro.props
+const { id, ariaLabel, title, description } = Astro.props
 ---
 
 <slot />
@@ -14,6 +15,7 @@ const { id, title, description } = Astro.props
   <h3 class="text-text font-medium">{title}</h3>
   <p class="text-muted text-sm">{description}</p>
   <a
+    aria-label={ariaLabel}
     href={`/projects/${id}`}
     class="group text-accent hover:text-text mt-2 inline-flex items-center gap-1 font-medium transition-colors"
   >
