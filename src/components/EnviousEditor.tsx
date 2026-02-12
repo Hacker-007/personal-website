@@ -74,7 +74,7 @@ export function EnviousEditor() {
     setOutput(null)
     setTimeout(() => {
       // TODO: execute `code` on API
-      setOutput('55')
+      setOutput('error: the editor is under construction')
       setIsRunning(false)
     }, 600)
   }
@@ -138,15 +138,50 @@ export function EnviousEditor() {
         </button>
       </div>
 
-      {output !== null && (
-        <div className="border-border shrink-0 border-t bg-[#0e0e14] px-4 py-2.5">
-          <div className="flex flex-col gap-2">
-            <span className="text-muted font-mono text-xs">output</span>
-            <span className="text-success font-mono text-sm">{output}</span>
+      <div
+        className="grid transition-[grid-template-rows,opacity] duration-150"
+        style={{
+          gridTemplateRows: output !== null ? '1fr' : '0fr',
+          opacity: output !== null ? 1 : 0,
+        }}
+      >
+        <div className="overflow-hidden">
+          <div className="border-border border-t bg-[#0e0e14] px-4 py-2.5">
+            <div className="flex items-start gap-2">
+              <div className="flex flex-1 flex-col gap-2">
+                <span className="text-muted font-mono text-xs">output</span>
+                <span className="font-mono text-sm">{output}</span>
+              </div>
+              <button
+                onClick={() => setOutput(null)}
+                className="text-muted hover:text-text hover:bg-text/10 -m-1 cursor-pointer rounded-full border-none bg-transparent p-1 transition-colors"
+              >
+                <CloseIcon />
+              </button>
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
+  )
+}
+
+function CloseIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth="2"
+      stroke="currentColor"
+      className="size-3.5"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M6 18 18 6M6 6l12 12"
+      />
+    </svg>
   )
 }
 

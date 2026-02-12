@@ -10,13 +10,18 @@ interface CommandInputProps {
 }
 
 export function RedisTerminal() {
-  const [commands, setCommands] = useState<CommandSubmission[]>([])
+  const [commands, setCommands] = useState<CommandSubmission[]>([
+    {
+      command: 'PING',
+      outputLines: ['PONG'],
+    },
+  ])
 
   const executeCommand = (command: string) => {
     // TODO: execute `command` on API
     setCommands(previousCommands => [
       ...previousCommands,
-      { command, outputLines: ['OK'] },
+      { command, outputLines: ['(error) the terminal is under construction'] },
     ])
   }
 
@@ -53,7 +58,7 @@ function SubmittedCommand({ command, outputLines }: CommandSubmission) {
       {/* Command Output */}
       <div className="border-l-accent/10 mt-1 border-l-2 pl-3">
         {outputLines.map((line, i) => (
-          <p key={i} className="text-muted">
+          <p key={i} className="text-muted text-sm">
             {line}
           </p>
         ))}
