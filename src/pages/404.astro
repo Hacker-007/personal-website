@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout>
+  <div class="flex min-h-screen flex-col items-center px-6 pt-[25vh]">
+    <p class="text-muted/20 text-9xl">404</p>
+    <p class="text-muted mt-8">It seems you got a little lost.</p>
+    <a
+      href="/"
+      class="group text-accent hover:text-text inline-flex items-center gap-1 font-medium transition-colors"
+    >
+      go home
+      <span
+        class="inline-block transition-transform group-hover:translate-x-0.5"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="mt-0.5 size-4"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"></path>
+        </svg>
+      </span>
+    </a>
+  </div>
+</Layout>
