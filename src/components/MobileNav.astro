@@ -1,0 +1,132 @@
+---
+import HorizontalDivider from './HorizontalDivider.astro'
+import Link from './Link.astro'
+---
+
+<!-- Hamburger Button -->
+<button
+  id="mobile-nav-toggle"
+  class="relative z-60 -mr-2 flex flex-col items-center justify-center gap-1.25 p-2 md:hidden"
+  aria-label="Open navigation menu"
+  aria-expanded="false"
+>
+  <span
+    id="hamburger-top"
+    class="bg-text block h-px w-4 origin-center transition-all duration-300"
+  ></span>
+  <span
+    id="hamburger-mid"
+    class="bg-text block h-px w-4 origin-center transition-all duration-300"
+  ></span>
+  <span
+    id="hamburger-bot"
+    class="bg-text block h-px w-4 origin-center transition-all duration-300"
+  ></span>
+</button>
+
+<!-- Full-Screen Overlay -->
+<div
+  id="mobile-nav-overlay"
+  class="bg-bg/95 pointer-events-none fixed inset-0 z-50 flex flex-col opacity-0 backdrop-blur-lg transition-all duration-300 md:hidden"
+  aria-hidden="true"
+>
+  <div
+    id="content"
+    class="flex flex-1 translate-y-4 flex-col justify-center px-8 transition-transform duration-300"
+  >
+    <nav class="flex flex-col gap-4">
+      <Link aria-label="personal projects" href="/projects" class="text-2xl">
+        projects
+      </Link>
+      <Link aria-label="blog" href="/blog" class="text-2xl">blog</Link>
+    </nav>
+
+    <HorizontalDivider />
+
+    <div class="flex flex-wrap gap-x-6 gap-y-3">
+      <Link
+        aria-label="LinkedIn"
+        href="https://www.linkedin.com/in/revanthpothukuchi"
+        rel="external noopener noreferrer"
+        target="_blank"
+      >
+        linkedin
+      </Link>
+      <Link
+        aria-label="GitHub"
+        href="https://www.github.com/Hacker-007"
+        rel="external noopener noreferrer"
+        target="_blank"
+      >
+        github
+      </Link>
+      <Link
+        aria-label="email"
+        href="mailto:revanthpothukuchi123@gmail.com"
+        rel="external noopener noreferrer"
+        target="_blank"
+      >
+        email
+      </Link>
+      <Link
+        aria-label="resume"
+        href="/resume.pdf"
+        download="Revanth Pothukuchi Resume"
+      >
+        resume
+      </Link>
+    </div>
+  </div>
+</div>
+
+<script>
+  const toggle = document.getElementById('mobile-nav-toggle')!
+  const overlay = document.getElementById('mobile-nav-overlay')!
+  const content = overlay.querySelector<HTMLElement>('#content')!
+  const top = document.getElementById('hamburger-top')!
+  const mid = document.getElementById('hamburger-mid')!
+  const bot = document.getElementById('hamburger-bot')!
+
+  function openNav() {
+    top.classList.add('translate-y-1.5', 'rotate-45')
+    mid.classList.add('opacity-0')
+    bot.classList.add('-translate-y-1.5', '-rotate-45')
+    toggle.setAttribute('aria-expanded', 'true')
+    toggle.setAttribute('aria-label', 'Close navigation menu')
+    overlay.classList.remove('opacity-0', 'pointer-events-none')
+    overlay.classList.add('opacity-100', 'pointer-events-auto')
+    overlay.setAttribute('aria-hidden', 'false')
+    content.classList.remove('translate-y-4')
+    content.classList.add('translate-y-0')
+    document.body.style.overflow = 'hidden'
+  }
+
+  function closeNav() {
+    top.classList.remove('translate-y-1.5', 'rotate-45')
+    mid.classList.remove('opacity-0')
+    bot.classList.remove('-translate-y-1.5', '-rotate-45')
+    toggle.setAttribute('aria-expanded', 'false')
+    toggle.setAttribute('aria-label', 'Open navigation menu')
+    overlay.classList.add('opacity-0', 'pointer-events-none')
+    overlay.classList.remove('opacity-100', 'pointer-events-auto')
+    overlay.setAttribute('aria-hidden', 'true')
+    content.classList.add('translate-y-4')
+    content.classList.remove('translate-y-0')
+    document.body.style.overflow = ''
+  }
+
+  toggle.addEventListener('click', () => {
+    const isOpen = toggle.getAttribute('aria-expanded') === 'true'
+    if (isOpen) {
+      closeNav()
+    } else {
+      openNav()
+    }
+  })
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeNav()
+    }
+  })
+</script>

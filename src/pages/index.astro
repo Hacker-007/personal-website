@@ -4,6 +4,7 @@ import { renderHighlightedCode } from '../utils/shiki'
 import Layout from '../layouts/Layout.astro'
 
 import Link from '../components/Link.astro'
+import MobileNav from '../components/MobileNav.astro'
 import { RedisTerminal } from '../components/RedisTerminal'
 import { EnviousEditor } from '../components/EnviousEditor'
 import InteractiveProject from '../components/InteractiveProject.astro'
@@ -25,12 +26,12 @@ const renderedCode = await renderHighlightedCode(defaultCode)
 ---
 
 <Layout>
-  <div class="mx-auto max-w-6xl px-6 py-8">
+  <div class="mx-auto max-w-6xl px-6 py-6 md:py-8">
     <header class="flex items-start justify-between">
       <section>
         <h1 class="text-lg font-semibold tracking-tight">Revanth Pothukuchi</h1>
         <p class="text-muted">MIT '25, CS</p>
-        <div class="mt-2 flex gap-4">
+        <div class="mt-2 hidden gap-4 md:flex">
           <Link
             aria-label="LinkedIn"
             href="https://www.linkedin.com/in/revanthpothukuchi"
@@ -55,26 +56,37 @@ const renderedCode = await renderHighlightedCode(defaultCode)
           >
             email
           </Link>
-          <Link aria-label="resume" href="/resume.pdf" download="Revanth Pothukuchi Resume">
+          <Link
+            aria-label="resume"
+            href="/resume.pdf"
+            download="Revanth Pothukuchi Resume"
+          >
             resume
           </Link>
         </div>
       </section>
-      <nav class="flex items-center gap-4">
+      <nav class="hidden items-center gap-4 md:flex">
         <Link aria-label="personal projects" href="/projects">projects</Link>
         <Link aria-label="blog" href="/blog">blog</Link>
       </nav>
+      <MobileNav />
     </header>
 
-    <main class="mt-12 max-w-2xl">
+    <main class="mt-8 max-w-2xl md:mt-12">
       <h2 class="text-muted leading-relaxed">
-        Member of Technical Staff at Nexus. Previously, an algorithmic
-        quantitative intern at Citi, technical co-founder of a startup, and
-        security researcher at MIT CSAIL.
+        Member of Technical Staff at Nexus.
+        <div class="md:hidden">
+          <br />
+          <br />
+        </div>
+        Previously, an algorithmic quantitative intern at Citi, technical co-founder
+        of a startup, and security researcher at MIT CSAIL.
       </h2>
     </main>
 
-    <section class="mt-20 flex items-start justify-between gap-10">
+    <section
+      class="mt-12 flex flex-col items-center justify-between gap-10 md:mt-20 md:flex-row md:items-start"
+    >
       <div class="flex-1">
         <InteractiveProject
           id="redis"
