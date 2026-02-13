@@ -32,7 +32,7 @@ const renderedCode = await renderHighlightedCode(defaultCode)
         <p class="text-muted">MIT '25, CS</p>
         <div class="mt-2 flex gap-4">
           <Link
-            aria-label="LinkedIn Page"
+            aria-label="LinkedIn"
             href="https://www.linkedin.com/in/revanthpothukuchi"
             rel="external noopener noreferrer"
             target="_blank"
@@ -40,7 +40,7 @@ const renderedCode = await renderHighlightedCode(defaultCode)
             linkedin
           </Link>
           <Link
-            aria-label="GitHub Page"
+            aria-label="GitHub"
             href="https://www.github.com/Hacker-007"
             rel="external noopener noreferrer"
             target="_blank"
@@ -48,21 +48,21 @@ const renderedCode = await renderHighlightedCode(defaultCode)
             github
           </Link>
           <Link
-            aria-label="Email"
+            aria-label="email"
             href="mailto:revanthpothukuchi123@gmail.com"
             rel="external noopener noreferrer"
             target="_blank"
           >
             email
           </Link>
-          <Link aria-label="Resume Page" href="/assets/resume.pdf" download="Revanth Pothukuchi Resume">
+          <Link aria-label="resume" href="/assets/resume.pdf" download="Revanth Pothukuchi Resume">
             resume
           </Link>
         </div>
       </section>
       <nav class="flex items-center gap-4">
-        <Link aria-label="Projects Page" href="/projects">projects</Link>
-        <Link aria-label="Blog Page" href="/blog">blog</Link>
+        <Link aria-label="personal projects" href="/projects">projects</Link>
+        <Link aria-label="blog" href="/blog">blog</Link>
       </nav>
     </header>
 
@@ -78,7 +78,7 @@ const renderedCode = await renderHighlightedCode(defaultCode)
       <div class="flex-1">
         <InteractiveProject
           id="redis"
-          ariaLabel="go to the redis server project"
+          ariaLabel="redis server project"
           title="Redis Server"
           description="A partial implementation of an asynchronous, multi-threaded, and multiplexed Redis server."
         >
@@ -88,7 +88,7 @@ const renderedCode = await renderHighlightedCode(defaultCode)
       <div class="flex-1">
         <InteractiveProject
           id="envious"
-          ariaLabel="go to the envious compiler project"
+          ariaLabel="envious compiler project"
           title="Envious"
           description="An AOT compiler for a custom language with a LLVM backend and Hindley-Milner type inference."
         >
