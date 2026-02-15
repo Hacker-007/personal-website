@@ -4,7 +4,8 @@ import { createOnigurumaEngine } from 'shiki/engine/oniguruma'
 import rust from 'shiki/langs/rust.mjs'
 import catppuccinMocha from 'shiki/themes/catppuccin-mocha.mjs'
 
-const removeItalicsTransformer: ShikiTransformer = {
+export const removeItalicsTransformer: ShikiTransformer = {
+  name: 'remove-italics',
   span(node) {
     if (node.properties.style && typeof node.properties.style === 'string') {
       node.properties.style = node.properties.style.replace(

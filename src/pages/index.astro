@@ -1,10 +1,7 @@
 ---
 import { renderHighlightedCode } from '../utils/shiki'
 
-import Layout from '../layouts/Layout.astro'
-
-import Link from '../components/Link.astro'
-import MobileNav from '../components/MobileNav.astro'
+import Layout from '../layouts/AppLayout.astro'
 import { RedisTerminal } from '../components/RedisTerminal'
 import { EnviousEditor } from '../components/EnviousEditor'
 import InteractiveProject from '../components/InteractiveProject.astro'
@@ -26,91 +23,44 @@ const renderedCode = await renderHighlightedCode(defaultCode)
 ---
 
 <Layout>
-  <div class="mx-auto max-w-6xl px-6 py-6 md:py-8">
-    <header class="flex items-start justify-between">
-      <section>
-        <h1 class="text-lg font-semibold tracking-tight">Revanth Pothukuchi</h1>
-        <p class="text-muted">MIT '25, CS</p>
-        <div class="mt-2 hidden gap-4 md:flex">
-          <Link
-            aria-label="LinkedIn"
-            href="https://www.linkedin.com/in/revanthpothukuchi"
-            rel="external noopener noreferrer"
-            target="_blank"
-          >
-            linkedin
-          </Link>
-          <Link
-            aria-label="GitHub"
-            href="https://www.github.com/Hacker-007"
-            rel="external noopener noreferrer"
-            target="_blank"
-          >
-            github
-          </Link>
-          <Link
-            aria-label="email"
-            href="mailto:revanthpothukuchi123@gmail.com"
-            rel="external noopener noreferrer"
-            target="_blank"
-          >
-            email
-          </Link>
-          <Link
-            aria-label="resume"
-            href="/resume.pdf"
-            download="Revanth Pothukuchi Resume"
-          >
-            resume
-          </Link>
-        </div>
-      </section>
-      <nav class="hidden items-center gap-4 md:flex">
-        <Link aria-label="personal projects" href="/projects">projects</Link>
-        <Link aria-label="blog" href="/blog">blog</Link>
-      </nav>
-      <MobileNav />
-    </header>
-
-    <main class="mt-8 max-w-2xl md:mt-12">
-      <h2 class="text-muted leading-relaxed">
-        Member of Technical Staff at Nexus.
-        <div class="md:hidden">
-          <br />
-          <br />
-        </div>
-        Previously, an algorithmic quantitative intern at Citi, technical co-founder
-        of a startup, and security researcher at MIT CSAIL.
-      </h2>
-    </main>
-
-    <section
-      class="mt-12 flex flex-col items-center justify-between gap-10 md:mt-20 md:flex-row md:items-start"
-    >
-      <div class="flex-1">
-        <InteractiveProject
-          id="redis"
-          ariaLabel="redis server project"
-          title="Redis Server"
-          description="A partial implementation of an asynchronous, multi-threaded, and multiplexed Redis server."
-        >
-          <RedisTerminal client:load />
-        </InteractiveProject>
+  <main class="mt-8 max-w-2xl md:mt-12">
+    <h2 class="text-muted leading-relaxed">
+      Member of Technical Staff at Nexus.
+      <div class="md:hidden">
+        <br />
+        <br />
       </div>
-      <div class="flex-1">
-        <InteractiveProject
-          id="envious"
-          ariaLabel="envious compiler project"
-          title="Envious"
-          description="An AOT compiler for a custom language with a LLVM backend and Hindley-Milner type inference."
-        >
-          <EnviousEditor
-            client:load
-            defaultCode={defaultCode}
-            renderedDefaultCode={renderedCode}
-          />
-        </InteractiveProject>
-      </div>
-    </section>
-  </div>
+      Previously, an algorithmic quantitative intern at Citi, technical co-founder
+      of a startup, and security researcher at MIT CSAIL.
+    </h2>
+  </main>
+
+  <section
+    class="mt-12 flex flex-col items-center justify-between gap-10 md:mt-20 md:flex-row md:items-start"
+  >
+    <div class="flex-1">
+      <InteractiveProject
+        id="redis"
+        ariaLabel="redis server project"
+        title="Redis Server"
+        description="A partial implementation of an asynchronous, multi-threaded, and multiplexed Redis server."
+      >
+        <RedisTerminal client:load />
+      </InteractiveProject>
+    </div>
+    <div class="flex-1">
+      <InteractiveProject
+        id="envious"
+        ariaLabel="envious compiler project"
+        title="Envious"
+        description="An AOT compiler for a custom language with a LLVM backend and Hindley-Milner type inference."
+      >
+        <EnviousEditor
+          client:load
+          defaultCode={defaultCode}
+          renderedDefaultCode={renderedCode}
+        />
+      </InteractiveProject>
+    </div>
+  </section>
 </Layout>

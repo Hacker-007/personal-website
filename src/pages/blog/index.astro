@@ -1,0 +1,36 @@
+---
+import { getBlogPosts } from '../../utils/blog'
+import { formatDate } from '../../utils/date'
+
+import Layout from '../../layouts/AppLayout.astro'
+import Link from '../../components/Link.astro'
+
+const allPosts = await getBlogPosts()
+---
+
+<Layout withExternalLinks={false}>
+  <main class="mt-8 max-w-xl md:mt-12">
+    {
+      allPosts.length === 0 ? (
+        <p class="text-muted">No posts yet.</p>
+      ) : (
+        <div class="group/list">
+          {allPosts.map(post => (
+            <article class="group w-full transition-opacity duration-200 group-hover/list:opacity-40 hover:opacity-100">
+              <Link
+                href={`/blog/${post.id}`}
+                class="flex w-full items-center gap-4"
+              >
+                <span class="text-text">{post.data.title}</span>
+                <span class="bg-muted h-px flex-1 opacity-30 group-hover:opacity-50" />
+                <span class="text-muted font-mono text-sm tracking-tight tabular-nums opacity-80 group-hover:opacity-100">
+                  {formatDate(post.data.publishedAt)}
+                </span>
+              </Link>
+            </article>
+          ))}
+        </div>
+      )
+    }
+  </main>
+</Layout>

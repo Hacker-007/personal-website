@@ -1,0 +1,65 @@
+---
+import type { MarkdownHeading } from 'astro'
+
+interface Props {
+  headings: MarkdownHeading[]
+  class?: string
+}
+
+const { headings, class: className } = Astro.props
+---
+
+<aside class={className}>
+  {headings.length > 0 && (
+    <nav>
+      <ul class="flex flex-col gap-1">
+        {headings
+          .filter(h => h.depth <= 3)
+          .map(heading => (
+            <li style={`padding-left: ${(heading.depth - 2) * 0.75}rem`}>
+              <a
+                href={`#${heading.slug}`}
+                data-heading={heading.slug}
+                class="toc-heading text-muted/60 hover:text-text inline-block leading-tight transition-colors duration-150 md:text-sm"
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+      </ul>
+    </nav>
+  )}
+</aside>
+
+<script>
+  const tocHeadings =
+    document.querySelectorAll<HTMLAnchorElement>('.toc-heading')
+
+  if (tocHeadings.length > 0) {
+    const headingElements = Array.from(tocHeadings)
+      .map(link => {
+        const slug = link.getAttribute('data-heading')
+        return slug ? document.getElementById(slug) : null
+      })
+      .filter(Boolean) as HTMLElement[]
+
+    function updateActive() {
+      // If the heading is within 30% from the top of
+      // the page, then it is considered active.
+      const threshold = window.innerHeight * 0.30
+      const activeHeading =
+        headingElements.findLast(el => el.getBoundingClientRect().top <= threshold)
+
+      tocHeadings.forEach(link => {
+        if (activeHeading && link.getAttribute('data-heading') === activeHeading.id) {
+          link.classList.add('!text-accent', '!opacity-100')
+        } else {
+          link.classList.remove('!text-accent', '!opacity-100')
+        }
+      })
+    }
+
+    window.addEventListener('scroll', updateActive, { passive: true })
+    updateActive()
+  }
+</script>

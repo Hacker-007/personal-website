@@ -1,0 +1,51 @@
+---
+import { render } from 'astro:content'
+
+import { formatDate } from '../../utils/date'
+import { getBlogPosts } from '../../utils/blog'
+
+import Layout from '../../layouts/AppLayout.astro'
+import TableOfContents from '../../components/TableOfContents.astro'
+
+import '../../styles/post.css'
+
+export async function getStaticPaths() {
+  const posts = await getBlogPosts()
+  return posts.map(post => ({
+    params: { id: post.id },
+    props: { post },
+  }))
+}
+
+const { post } = Astro.props
+const { Content, headings } = await render(post)
+---
+
+<Layout withExternalLinks={false}>
+  <div class="mt-8 flex flex-col gap-10 md:mt-12 md:flex-row">
+    <!-- Desktop Table of Contents -->
+    <TableOfContents headings={headings} class="sticky top-24 hidden w-48 max-h-[calc(100vh-8rem)] shrink-0 self-start overflow-y-auto md:block" />
+
+    <main class="max-w-2xl">
+      <!-- Post Heading -->
+      <header class="mb-8 md:mb-10">
+        <h1 class="text-text text-2xl font-medium">
+          {post.data.title}
+        </h1>
+        <time
+          class="text-muted mt-2 block font-mono text-sm tracking-tight tabular-nums opacity-60"
+          datetime={post.data.publishedAt.toISOString()}
+        >
+          {formatDate(post.data.publishedAt)}
+        </time>
+      </header>
+
+      <!-- Mobile Table of Contents -->
+      <TableOfContents headings={headings} class="mb-10 block md:hidden" />
+
+      <article class="prose">
+        <Content />
+      </article>
+    </main>
+  </div>
+</Layout>
