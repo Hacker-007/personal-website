@@ -2,7 +2,11 @@ use axum::Router;
 use dotenvy::dotenv;
 use tracing::info;
 
-use crate::{controllers::health, error::AppResult, state::AppState};
+use crate::{
+    controllers::{health, redis},
+    error::AppResult,
+    state::AppState,
+};
 
 mod controllers;
 mod error;
@@ -21,5 +25,5 @@ async fn main() -> AppResult<()> {
 }
 
 pub fn create_app() -> Router<AppState> {
-    Router::new().merge(health::router())
+    Router::new().merge(health::router()).merge(redis::router())
 }

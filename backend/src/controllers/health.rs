@@ -8,7 +8,7 @@ pub fn router() -> Router<AppState> {
 }
 
 #[derive(TypedPath)]
-#[typed_path("/v3/healthz")]
+#[typed_path("/v1/healthz")]
 struct GetHealth;
 
 #[tracing::instrument(skip_all)]
