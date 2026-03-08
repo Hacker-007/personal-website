@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface CommandSubmission {
   command: string
@@ -10,6 +10,8 @@ interface CommandInputProps {
 }
 
 export function RedisTerminal() {
+  const bodyRef = useRef<HTMLDivElement>(null)
+  const shouldAutoScrollRef = useRef(true)
   const [commands, setCommands] = useState<CommandSubmission[]>([
     {
       command: 'PING',
@@ -18,6 +20,26 @@ export function RedisTerminal() {
   ])
 
   const executeCommand = (command: string) => {
+  useEffect(() => {
+    if (shouldAutoScrollRef.current && bodyRef.current) {
+      const el = bodyRef.current
+      el.scrollTop = el.scrollHeight
+    }
+  }, [commands])
+
+  const handleScroll = () => {
+    const el = bodyRef.current
+    if (!el) {
+      return
+    }
+
+    // We should auto-scroll to the bottom of the
+    // container if we are within 10px from the
+    // bottom.
+    const atBottom = el.scrollHeight - el.scrollTop <= el.clientHeight + 10
+    shouldAutoScrollRef.current = atBottom
+  }
+
     // TODO: execute `command` on API
     setCommands(previousCommands => [
       ...previousCommands,
@@ -33,7 +55,11 @@ export function RedisTerminal() {
       </div>
 
       {/* Terminal Body */}
-      <div className="bg-surface-1 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4">
+      <div
+        ref={bodyRef}
+        onScroll={handleScroll}
+        className="bg-surface-1 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4"
+      >
         {commands.map(({ command, outputLines }, i) => (
           <SubmittedCommand
             key={i}
