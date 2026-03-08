@@ -1,9 +1,8 @@
-use std::path::PathBuf;
+use crate::services::redis::RedisPool;
 
 #[derive(Clone)]
 pub struct AppState {
-    /// The path to the Unix domain socket
-    /// file the Redis server is listening
-    /// on.
-    pub redis_socket: PathBuf,
+    /// A pool of Unix socket connections to
+    /// the Redis server.
+    pub redis: RedisPool,
 }
