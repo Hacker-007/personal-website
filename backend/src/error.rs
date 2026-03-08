@@ -21,14 +21,14 @@ pub enum RedisError {
     #[error("an unknown error occurred within the pool")]
     Pool,
     #[error(transparent)]
-    RESP(#[from] resp3::error::RESPError),
+    Resp(#[from] resp3::error::RESPError),
     #[error(transparent)]
     CommandRead(#[from] resp3::pretty::CommandReadError),
 }
 
 impl From<resp3::error::RESPError> for AppError {
     fn from(error: resp3::error::RESPError) -> Self {
-        AppError::Redis(RedisError::RESP(error))
+        AppError::Redis(RedisError::Resp(error))
     }
 }
 
@@ -44,7 +44,7 @@ impl IntoResponse for AppError {
             AppError::IO(_)
             | AppError::Redis(RedisError::HealthCheck)
             | AppError::Redis(RedisError::Pool)
-            | AppError::Redis(RedisError::RESP(_))
+            | AppError::Redis(RedisError::Resp(_))
             | AppError::Redis(RedisError::CommandRead(_)) => StatusCode::INTERNAL_SERVER_ERROR,
         };
 
