@@ -9,11 +9,13 @@ use tracing_subscriber::EnvFilter;
 use crate::{
     controllers::{health, redis},
     error::AppResult,
+    services::redis::RedisPool,
     state::AppState,
 };
 
 mod controllers;
 mod error;
+mod services;
 mod state;
 
 #[derive(Parser)]
@@ -43,10 +45,9 @@ async fn main() -> AppResult<()> {
 }
 
 fn create_app(args: CLIArguments) -> Router {
+    let redis = RedisPool::new(args.redis_socket, 4);
     Router::new()
         .merge(health::router())
         .merge(redis::router())
-        .with_state(AppState {
-            redis_socket: args.redis_socket,
-        })
+        .with_state(AppState { redis })
 }
