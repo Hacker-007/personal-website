@@ -34,7 +34,7 @@ impl RedisConnection {
     }
 
     pub async fn ping(&mut self) -> AppResult<()> {
-        let ping = encoding::array(vec![encoding::simple_string("PING")]);
+        let ping = encoding::array(vec![encoding::bulk_string("PING")]);
         self.stream.send(ping).await?;
         let value = self
             .stream
