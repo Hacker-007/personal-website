@@ -19,7 +19,6 @@ export function RedisTerminal() {
     },
   ])
 
-  const executeCommand = (command: string) => {
   useEffect(() => {
     if (shouldAutoScrollRef.current && bodyRef.current) {
       const el = bodyRef.current
@@ -40,6 +39,7 @@ export function RedisTerminal() {
     shouldAutoScrollRef.current = atBottom
   }
 
+  const executeCommand = (command: string) => {
     // TODO: execute `command` on API
     setCommands(previousCommands => [
       ...previousCommands,
