@@ -1,9 +1,10 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, time::Duration};
 
 use axum::{
     Router,
-    http::{HeaderValue, Method},
+    http::{HeaderValue, Method, header::AUTHORIZATION},
 };
+use bytes::Bytes;
 use clap::Parser;
 use dotenvy::dotenv;
 use serde::Deserialize;
@@ -12,14 +13,15 @@ use tracing::info;
 use tracing_subscriber::EnvFilter;
 
 use crate::{
-    controllers::{health, redis},
+    controllers::{health, redis, token},
     error::AppResult,
-    services::redis::RedisPool,
+    services::{redis::RedisPool, token::TokenService},
     state::AppState,
 };
 
 mod controllers;
 mod error;
+mod middlewares;
 mod services;
 mod state;
 
@@ -33,6 +35,7 @@ struct CLIArguments {
 #[derive(Debug, Deserialize)]
 struct EnvironmentConfig {
     cors_origins: Vec<String>,
+    token_secret: Bytes,
 }
 
 #[tokio::main(flavor = "multi_thread")]
@@ -64,13 +67,17 @@ fn create_app(env: EnvironmentConfig, args: CLIArguments) -> Router {
         .collect::<Result<Vec<_>, _>>()
         .expect("CORS origins should be valid");
 
+    let token = TokenService::new(env.token_secret, Duration::from_secs(60));
+    let state = AppState { redis, token };
     Router::new()
         .merge(health::router())
         .merge(redis::router())
-        .with_state(AppState { redis })
+        .merge(token::router())
+        .with_state(state.clone())
         .layer(
             CorsLayer::new()
                 .allow_origin(origins)
-                .allow_methods([Method::GET, Method::POST]),
+                .allow_methods([Method::GET, Method::POST])
+                .allow_headers([AUTHORIZATION]),
         )
 }

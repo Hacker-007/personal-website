@@ -12,6 +12,20 @@ pub enum AppError {
     IO(#[from] std::io::Error),
     #[error("[redis] {0}")]
     Redis(#[from] RedisError),
+    #[error("[token] {0}")]
+    Token(#[from] TokenError),
+}
+
+#[derive(Debug, Error)]
+pub enum TokenError {
+    #[error("invalid token format found")]
+    InvalidFormat,
+    #[error("the token is expired")]
+    Expired,
+    #[error("signature of token does not match")]
+    InvalidSignature,
+    #[error("the token has already been used")]
+    Replayed,
 }
 
 #[derive(Debug, Error)]
@@ -46,6 +60,10 @@ impl IntoResponse for AppError {
             | AppError::Redis(RedisError::Pool)
             | AppError::Redis(RedisError::Resp(_))
             | AppError::Redis(RedisError::CommandRead(_)) => StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::Token(TokenError::InvalidFormat)
+            | AppError::Token(TokenError::Expired)
+            | AppError::Token(TokenError::InvalidSignature)
+            | AppError::Token(TokenError::Replayed) => StatusCode::BAD_REQUEST,
         };
 
         (status_code, self.to_string()).into_response()
