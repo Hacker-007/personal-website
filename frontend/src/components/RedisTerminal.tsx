@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { RedisResponse } from '../types/redis'
+import { type } from 'arktype'
 
 interface CommandSubmission {
   command: string
@@ -6,7 +8,7 @@ interface CommandSubmission {
 }
 
 interface CommandInputProps {
-  executeCommand: (command: string) => void
+  executeCommand: (command: string) => Promise<void>
 }
 
 export function RedisTerminal() {
@@ -39,12 +41,19 @@ export function RedisTerminal() {
     shouldAutoScrollRef.current = atBottom
   }
 
-  const executeCommand = (command: string) => {
-    // TODO: execute `command` on API
-    setCommands(previousCommands => [
-      ...previousCommands,
-      { command, outputLines: ['(error) the terminal is under construction'] },
-    ])
+  const executeCommand = async (command: string) => {
+    const response = await fetch(`/api/redis`, {
+      method: 'POST',
+      body: JSON.stringify({ command }),
+    })
+      .then(res => res.json())
+      .then(RedisResponse)
+
+    if (response instanceof type.errors) {
+      return
+    }
+
+    setCommands(previousCommands => [...previousCommands, response])
   }
 
   return (
@@ -99,12 +108,44 @@ function SubmittedCommand({ command, outputLines }: CommandSubmission) {
 
 function CommandInput({ executeCommand }: CommandInputProps) {
   const [commandInput, setCommandInput] = useState('')
+  const [history, setHistory] = useState<string[]>(['PING'])
+  const [_, setHistoryIndex] = useState<number | null>(null)
 
-  const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = async (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
     const command = commandInput.trim()
     if (event.key === 'Enter' && command !== '') {
-      executeCommand(command)
+      await executeCommand(command)
+
       setCommandInput('')
+      setHistory(previous => [...previous, command])
+      setHistoryIndex(null)
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      setHistoryIndex(previous => {
+        const index =
+          previous === null ? history.length - 1 : Math.max(previous - 1, 0)
+
+        setCommandInput(history[index] ?? '')
+        return index
+      })
+    } else if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      setHistoryIndex(previous => {
+        if (previous === null) {
+          return null
+        }
+
+        const index = previous + 1
+        if (index >= history.length) {
+          setCommandInput('')
+          return null
+        }
+
+        setCommandInput(history[index])
+        return index
+      })
     }
   }
 
@@ -121,7 +162,7 @@ function CommandInput({ executeCommand }: CommandInputProps) {
           placeholder="Type a command..."
           value={commandInput}
           onChange={e => setCommandInput(e.currentTarget.value)}
-          onKeyUp={handleKeyUp}
+          onKeyDown={handleKeyDown}
         />
       </p>
     </div>
