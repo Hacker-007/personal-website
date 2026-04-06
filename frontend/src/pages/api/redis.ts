@@ -1,12 +1,13 @@
 import type { APIRoute } from 'astro'
-import { API_URL } from 'astro:env/server'
 import { RedisRequest } from '../../types/redis'
 import { type } from 'arktype'
+import { bffPipeline, type Handler } from '../../server/middleware'
+import { createBackendClient } from '../../server/client'
 
 export const prerender = false
 
-export const POST: APIRoute = async ({ request }) => {
-  const body = await request.json()
+const handler: Handler = async ctx => {
+  const body = await ctx.request.json()
   const redisReq = RedisRequest(body)
   if (redisReq instanceof type.errors) {
     return new Response(JSON.stringify({ error: 'invalid Redis request' }), {
@@ -14,10 +15,12 @@ export const POST: APIRoute = async ({ request }) => {
     })
   }
 
-  const output = await fetch(`${API_URL}/v1/redis`, {
-    method: 'POST',
-    body: redisReq.command,
-  }).then(res => res.text())
+  const client = createBackendClient(ctx)
+  const output = await client
+    .post('redis', {
+      body: redisReq.command,
+    })
+    .text()
 
   return new Response(
     JSON.stringify({
@@ -27,3 +30,5 @@ export const POST: APIRoute = async ({ request }) => {
     { headers: { 'Content-Type': 'application/json' } }
   )
 }
+
+export const POST: APIRoute = async ctx => bffPipeline(handler)(ctx)

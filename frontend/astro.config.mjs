@@ -14,6 +14,11 @@ export default defineConfig({
   env: {
     schema: {
       API_URL: envField.string({ context: 'server', access: 'secret' }),
+      CF_CLIENT_ID: envField.string({ context: 'server', access: 'secret' }),
+      CF_CLIENT_SECRET: envField.string({
+        context: 'server',
+        access: 'secret',
+      }),
     },
   },
   markdown: {

@@ -1,12 +1,8 @@
-use axum::{Router, extract::State, http::StatusCode};
-use axum_extra::{
-    extract::cookie::{Cookie, CookieJar, SameSite},
-    routing::{RouterExt, TypedPath},
-};
+use axum::{Json, Router, extract::State};
+use axum_extra::routing::{RouterExt, TypedPath};
+use serde::Serialize;
 
-use crate::state::AppState;
-
-const SESSION_COOKIE: &str = "session-token";
+use crate::{error::AppResult, services::token::Token, state::AppState};
 
 pub fn router() -> Router<AppState> {
     Router::new().typed_get(get_token)
@@ -16,14 +12,16 @@ pub fn router() -> Router<AppState> {
 #[typed_path("/v1/token")]
 struct GetToken;
 
-#[tracing::instrument(skip_all)]
-async fn get_token(_: GetToken, state: State<AppState>, jar: CookieJar) -> (CookieJar, StatusCode) {
-    let token = state.token.issue();
-    let cookie = Cookie::build((SESSION_COOKIE, token.into_inner()))
-        .http_only(true)
-        .secure(true)
-        .same_site(SameSite::Strict)
-        .build();
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct TokenResponse {
+    token: Token<String>,
+    expires_at: u128,
+}
 
-    (jar.add(cookie), StatusCode::NO_CONTENT)
+#[tracing::instrument(skip_all)]
+async fn get_token(_: GetToken, state: State<AppState>) -> AppResult<Json<TokenResponse>> {
+    let token = state.token.issue();
+    let expires_at = state.token.expiration_time(&token)?;
+    Ok(Json(TokenResponse { token, expires_at }))
 }

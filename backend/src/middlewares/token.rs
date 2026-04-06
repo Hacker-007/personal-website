@@ -2,30 +2,26 @@ use axum::{
     extract::FromRequestParts,
     http::{StatusCode, request::Parts},
 };
-use axum_extra::extract::cookie::CookieJar;
 
 use crate::{services::token::Token, state::AppState};
 
-const SESSION_COOKIE: &str = "session-token";
+const ABUSE_TOKEN_HEADER: &str = "X-Abuse-Token";
 
 /// Ensures that the request contains a valid anonymous
 /// session token.
-pub struct SessionToken;
+pub struct AbuseToken;
 
-impl FromRequestParts<AppState> for SessionToken {
+impl FromRequestParts<AppState> for AbuseToken {
     type Rejection = StatusCode;
 
     async fn from_request_parts(
         parts: &mut Parts,
         state: &AppState,
     ) -> Result<Self, Self::Rejection> {
-        let jar = CookieJar::from_request_parts(parts, state)
-            .await
-            .expect("cookie jar should be infallible");
-
-        let token = jar
-            .get(SESSION_COOKIE)
-            .map(|c| Token::new(c.value().to_owned()))
+        let token = parts
+            .headers
+            .get(ABUSE_TOKEN_HEADER)
+            .map(|header| Token::new(header))
             .ok_or(StatusCode::UNAUTHORIZED)?;
 
         state

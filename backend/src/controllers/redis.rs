@@ -7,7 +7,7 @@ use resp3::{
 };
 use serde::Serialize;
 
-use crate::{error::AppResult, middlewares::token::SessionToken, state::AppState};
+use crate::{error::AppResult, middlewares::token::AbuseToken, state::AppState};
 
 pub fn router() -> Router<AppState> {
     Router::new().typed_post(post_query)
@@ -41,7 +41,7 @@ impl IntoResponse for QueryResponse {
 #[tracing::instrument(skip_all)]
 async fn post_query(
     _: PostQuery,
-    _: SessionToken,
+    _: AbuseToken,
     mut state: State<AppState>,
     req: Bytes,
 ) -> AppResult<QueryResponse> {

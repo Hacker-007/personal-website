@@ -29,10 +29,6 @@ impl<T> Token<T> {
     pub fn new(token: T) -> Self {
         Self(token)
     }
-
-    pub fn into_inner(self) -> T {
-        self.0
-    }
 }
 
 /// Generates and verifies unique tokens for
@@ -80,6 +76,18 @@ impl TokenService {
         token[16..32].copy_from_slice(&nonce);
         token[32..].copy_from_slice(&signature);
         Token(URL_SAFE_NO_PAD.encode(token))
+    }
+
+    /// Returns the Unix timestamp after which `token` will be
+    /// considered expired.
+    pub fn expiration_time(&self, token: &Token<impl AsRef<[u8]>>) -> Result<u128, TokenError> {
+        let mut bytes = URL_SAFE_NO_PAD
+            .decode(token)
+            .map(Bytes::from)
+            .map_err(|_| TokenError::InvalidFormat)?;
+
+        let timestamp = bytes.get_u128();
+        Ok(timestamp + self.expiration_time.as_millis())
     }
 
     /// Verifies that the 64-bit `token` is valid, i.e.
