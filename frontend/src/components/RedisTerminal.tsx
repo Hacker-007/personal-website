@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { RedisResponse } from '../types/redis'
 import { type } from 'arktype'
+import { apiFetch } from '../utils/api'
 
 interface CommandSubmission {
   command: string
@@ -42,7 +43,7 @@ export function RedisTerminal() {
   }
 
   const executeCommand = async (command: string) => {
-    const response = await fetch(`/api/redis`, {
+    const response = await apiFetch('/api/redis', {
       method: 'POST',
       body: JSON.stringify({ command }),
     })

@@ -15,7 +15,10 @@ use tracing_subscriber::EnvFilter;
 use crate::{
     controllers::{health, redis, token},
     error::AppResult,
-    services::{redis::RedisPool, token::TokenService},
+    services::{
+        redis::RedisPool,
+        token::{TokenService, challenge::TokenChallengeService},
+    },
     state::AppState,
 };
 
@@ -67,13 +70,20 @@ fn create_app(env: EnvironmentConfig, args: CLIArguments) -> Router {
         .collect::<Result<Vec<_>, _>>()
         .expect("CORS origins should be valid");
 
-    let token = TokenService::new(env.token_secret, Duration::from_secs(60));
-    let state = AppState { redis, token };
+    let token = TokenService::new(env.token_secret.clone(), Duration::from_secs(60));
+    let challenge = TokenChallengeService::new(env.token_secret, Duration::from_secs(60));
+    let api = Router::new()
+        .nest("/health", health::router())
+        .nest("/redis", redis::router())
+        .nest("/token", token::router());
+
     Router::new()
-        .merge(health::router())
-        .merge(redis::router())
-        .merge(token::router())
-        .with_state(state.clone())
+        .nest("/v1", api)
+        .with_state(AppState {
+            redis,
+            token,
+            challenge,
+        })
         .layer(
             CorsLayer::new()
                 .allow_origin(origins)

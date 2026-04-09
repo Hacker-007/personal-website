@@ -14,6 +14,8 @@ pub enum AppError {
     Redis(#[from] RedisError),
     #[error("[token] {0}")]
     Token(#[from] TokenError),
+    #[error("[challenge] {0}")]
+    TokenChallenge(#[from] TokenChallengeError),
 }
 
 #[derive(Debug, Error)]
@@ -24,8 +26,16 @@ pub enum TokenError {
     Expired,
     #[error("signature of token does not match")]
     InvalidSignature,
-    #[error("the token has already been used")]
-    Replayed,
+}
+
+#[derive(Debug, Error)]
+pub enum TokenChallengeError {
+    #[error("the token challenge is expired")]
+    Expired,
+    #[error("invalid token challenge signature found")]
+    InvalidSignature,
+    #[error("the provided solution is incorrect")]
+    Incorrect,
 }
 
 #[derive(Debug, Error)]
@@ -63,7 +73,9 @@ impl IntoResponse for AppError {
             AppError::Token(TokenError::InvalidFormat)
             | AppError::Token(TokenError::Expired)
             | AppError::Token(TokenError::InvalidSignature)
-            | AppError::Token(TokenError::Replayed) => StatusCode::BAD_REQUEST,
+            | AppError::TokenChallenge(TokenChallengeError::Expired)
+            | AppError::TokenChallenge(TokenChallengeError::InvalidSignature)
+            | AppError::TokenChallenge(TokenChallengeError::Incorrect) => StatusCode::BAD_REQUEST,
         };
 
         (status_code, self.to_string()).into_response()

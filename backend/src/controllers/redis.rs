@@ -1,5 +1,4 @@
-use axum::{Router, body::Bytes, extract::State, response::IntoResponse};
-use axum_extra::routing::{RouterExt, TypedPath};
+use axum::{Router, body::Bytes, extract::State, response::IntoResponse, routing::post};
 use bytes::{BufMut, BytesMut};
 use resp3::{
     RESPValue,
@@ -10,12 +9,8 @@ use serde::Serialize;
 use crate::{error::AppResult, middlewares::token::AbuseToken, state::AppState};
 
 pub fn router() -> Router<AppState> {
-    Router::new().typed_post(post_query)
+    Router::new().route("/", post(post_query))
 }
-
-#[derive(TypedPath)]
-#[typed_path("/v1/redis")]
-struct PostQuery;
 
 /// The response for a given Redis query.
 ///
@@ -40,7 +35,6 @@ impl IntoResponse for QueryResponse {
 
 #[tracing::instrument(skip_all)]
 async fn post_query(
-    _: PostQuery,
     _: AbuseToken,
     mut state: State<AppState>,
     req: Bytes,

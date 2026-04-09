@@ -1,4 +1,7 @@
-use crate::services::{redis::RedisPool, token::TokenService};
+use crate::services::{
+    redis::RedisPool,
+    token::{TokenService, challenge::TokenChallengeService},
+};
 
 #[derive(Clone)]
 pub struct AppState {
@@ -6,4 +9,5 @@ pub struct AppState {
     /// the Redis server.
     pub redis: RedisPool,
     pub token: TokenService,
+    pub challenge: TokenChallengeService,
 }

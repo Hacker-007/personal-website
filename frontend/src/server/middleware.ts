@@ -1,5 +1,7 @@
 import type { APIContext } from 'astro'
-import { fetchAbuseToken, isExpired } from './abuse'
+import { getTokenChallenge, isAlmostExpired, refreshAbuseToken } from './abuse'
+import { getOrCreateSession } from './session'
+import { getCachedToken, setCachedToken } from './tokenCache'
 
 export type Handler = (ctx: APIContext) => Promise<Response>
 type Middleware = (ctx: APIContext, next: Handler) => Promise<Response>
@@ -13,13 +15,31 @@ function compose(...middlewares: Middleware[]) {
 }
 
 const ensureAbuseToken: Middleware = async (ctx, next) => {
-  let abuseToken = ctx.locals.abuseToken
-  if (!abuseToken || isExpired(abuseToken)) {
-    abuseToken = await fetchAbuseToken(ctx)
+  const sid = getOrCreateSession(ctx)
+  const cachedToken = await getCachedToken(sid)
+  if (cachedToken && !isAlmostExpired(cachedToken)) {
+    ctx.locals.abuseToken = cachedToken
+    return next(ctx)
   }
 
-  ctx.locals.abuseToken = abuseToken
-  return next(ctx)
+  if (cachedToken && isAlmostExpired(cachedToken)) {
+    const refreshedToken = await refreshAbuseToken(ctx, cachedToken)
+    if (refreshedToken) {
+      await setCachedToken(sid, refreshedToken)
+      ctx.locals.abuseToken = refreshedToken
+      return next(ctx)
+    }
+  }
+
+  const challenge = await getTokenChallenge(ctx)
+  if (!challenge) {
+    return new Response('failed to get token PoW challenge', { status: 500 })
+  }
+
+  return new Response(JSON.stringify(challenge), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json', 'X-Requires-PoW': '1' },
+  })
 }
 
 // Pipeline of composed middlewares for the backend-for-frontend (BFF).

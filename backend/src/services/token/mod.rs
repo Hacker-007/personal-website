@@ -3,19 +3,18 @@ use std::time::{Duration, SystemTime};
 use base64::{Engine, engine::general_purpose::URL_SAFE_NO_PAD};
 use bytes::{Buf, Bytes};
 use hmac::{Hmac, Mac as _, digest::Update};
-use moka::{future::Cache, ops::compute::Op};
 use rand::RngExt;
 use serde::Serialize;
 use sha2::Sha256;
 
 use crate::error::TokenError;
 
+pub mod challenge;
+
 type Signer = Hmac<Sha256>;
 
 /// A unique, opaque token used to identify
-/// a single anonymous session. This is useful
-/// for protecting against replay attacks and
-/// for enforcing session rate limits.
+/// a single anonymous session.
 #[derive(Debug, Serialize)]
 pub struct Token<T>(T);
 
@@ -37,13 +36,11 @@ impl<T> Token<T> {
 /// NOTE:
 /// These tokens do not provide any authentication
 /// or authorization mechanisms. However, they are
-/// useful for replay protection and session rate
-/// limiting.
+/// useful for abuse prevention.
 #[derive(Debug, Clone)]
 pub struct TokenService {
     secret: Bytes,
     expiration_time: Duration,
-    seen_nonces: Cache<Bytes, ()>,
 }
 
 impl TokenService {
@@ -51,7 +48,6 @@ impl TokenService {
         Self {
             secret,
             expiration_time,
-            seen_nonces: Cache::new(1_024),
         }
     }
 
@@ -120,26 +116,13 @@ impl TokenService {
             .finalize()
             .into_bytes();
 
-        if self.now() - timestamp > self.expiration_time.as_millis() {
-            return Err(TokenError::Expired);
-        }
-
         if expected_signature != &*actual_signature {
             return Err(TokenError::InvalidSignature);
         }
 
-        // Insert the nonce if it hasn't been seen before;
-        // reject the token as a replay if it has.
-        self.seen_nonces
-            .entry(nonce)
-            .and_try_compute_with(async |entry| {
-                if entry.is_none() {
-                    Ok(Op::Put(()))
-                } else {
-                    Err(TokenError::Replayed)
-                }
-            })
-            .await?;
+        if self.now() - timestamp > self.expiration_time.as_millis() {
+            return Err(TokenError::Expired);
+        }
 
         Ok(())
     }
