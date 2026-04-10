@@ -1,6 +1,5 @@
 import type { APIContext } from 'astro'
 import { getTokenChallenge, isAlmostExpired, refreshAbuseToken } from './abuse'
-import { getOrCreateSession } from './session'
 import { getCachedToken, setCachedToken } from './tokenCache'
 
 export type Handler = (ctx: APIContext) => Promise<Response>
@@ -15,8 +14,7 @@ function compose(...middlewares: Middleware[]) {
 }
 
 const ensureAbuseToken: Middleware = async (ctx, next) => {
-  const sid = getOrCreateSession(ctx)
-  const cachedToken = await getCachedToken(sid)
+  const cachedToken = getCachedToken(ctx)
   if (cachedToken && !isAlmostExpired(cachedToken)) {
     ctx.locals.abuseToken = cachedToken
     return next(ctx)
@@ -25,7 +23,7 @@ const ensureAbuseToken: Middleware = async (ctx, next) => {
   if (cachedToken && isAlmostExpired(cachedToken)) {
     const refreshedToken = await refreshAbuseToken(ctx, cachedToken)
     if (refreshedToken) {
-      await setCachedToken(sid, refreshedToken)
+      setCachedToken(ctx, refreshedToken)
       ctx.locals.abuseToken = refreshedToken
       return next(ctx)
     }

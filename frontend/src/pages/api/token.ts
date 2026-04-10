@@ -1,7 +1,6 @@
 import type { APIRoute } from 'astro'
 import { type } from 'arktype'
 import { fetchAbuseToken } from '../../server/abuse'
-import { getOrCreateSession } from '../../server/session'
 import { setCachedToken } from '../../server/tokenCache'
 import { TokenChallengeSolution } from '../../types/token'
 
@@ -15,12 +14,11 @@ export const POST: APIRoute = async ctx => {
   }
 
   const { challenge, solution } = submissionRequest
-  const sid = getOrCreateSession(ctx)
   const token = await fetchAbuseToken(ctx, challenge, solution)
   if (!token) {
     return new Response(null, { status: 500 })
   }
 
-  await setCachedToken(sid, token)
+  setCachedToken(ctx, token)
   return new Response(null, { status: 200 })
 }

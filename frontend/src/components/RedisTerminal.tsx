@@ -118,7 +118,6 @@ function CommandInput({ executeCommand }: CommandInputProps) {
     const command = commandInput.trim()
     if (event.key === 'Enter' && command !== '') {
       await executeCommand(command)
-
       setCommandInput('')
       setHistory(previous => [...previous, command])
       setHistoryIndex(null)
