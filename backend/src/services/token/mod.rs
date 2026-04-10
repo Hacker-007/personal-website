@@ -80,6 +80,7 @@ impl TokenService {
         let mut bytes = URL_SAFE_NO_PAD
             .decode(token)
             .map(Bytes::from)
+            .inspect_err(|err| tracing::error!("{err}"))
             .map_err(|_| TokenError::InvalidFormat)?;
 
         let timestamp = bytes.get_u128();
@@ -100,6 +101,7 @@ impl TokenService {
         let mut bytes = URL_SAFE_NO_PAD
             .decode(token)
             .map(Bytes::from)
+            .inspect_err(|err| tracing::error!("{err}"))
             .map_err(|_| TokenError::InvalidFormat)?;
 
         if bytes.len() != 64 {

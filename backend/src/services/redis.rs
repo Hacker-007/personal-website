@@ -86,6 +86,7 @@ impl RedisPool {
         self.0
             .get()
             .await
+            .inspect_err(|err| tracing::error!("{err}"))
             .map_err(|_| RedisError::Pool)
             .map_err(Into::into)
     }
