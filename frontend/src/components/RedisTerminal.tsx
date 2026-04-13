@@ -133,7 +133,11 @@ function CommandInput({ executeCommand }: CommandInputProps) {
     const command = commandInput.trim()
     if (event.key === 'Enter' && command !== '') {
       setPendingResult(true)
-      await executeCommand(command).finally(() => setPendingResult(false))
+      await Promise.all([
+        executeCommand(command).finally(() => setPendingResult(false)),
+        new Promise(resolve => setTimeout(resolve, 250)),
+      ])
+
       setCommandInput('')
       setHistory(previous => [...previous, command])
       setHistoryIndex(null)
