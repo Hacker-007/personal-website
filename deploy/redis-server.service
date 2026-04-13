@@ -1,0 +1,14 @@
+[Unit]
+Description=Personal Website Redis Server
+After=network.target
+
+[Service]
+Type=simple
+User=ci
+WorkingDirectory=/home/ci
+ExecStart=/home/ci/bin/redis-server socket --path /home/ci/redis.socket
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

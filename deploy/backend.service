@@ -1,0 +1,16 @@
+[Unit]
+Description=Personal Website Backend
+After=network.target redis-server.service
+Requires=redis-server.service
+
+[Service]
+Type=simple
+User=ci
+WorkingDirectory=/home/ci
+EnvironmentFile=/home/ci/.env
+ExecStart=/home/ci/bin/backend --redis-socket /home/ci/redis.socket
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
