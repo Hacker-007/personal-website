@@ -10,6 +10,10 @@ import {
 let globalLimiter: Ratelimit
 let sessionLimiter: Ratelimit
 
+// Persists global rate limit requests within the same Worker
+// isolate, reducing Redis calls when traffic is within limits.
+const globalCache = new Map()
+
 function getLimiters() {
   if (!globalLimiter || !sessionLimiter) {
     const redis = new Redis({
@@ -20,6 +24,7 @@ function getLimiters() {
     globalLimiter = new Ratelimit({
       redis,
       limiter: Ratelimit.slidingWindow(GLOBAL_MINUTE_RATE_LIMIT, '1 m'),
+      ephemeralCache: globalCache,
       prefix: 'rl:global',
     })
 
