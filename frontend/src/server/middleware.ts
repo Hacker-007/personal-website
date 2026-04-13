@@ -1,17 +1,37 @@
 import type { APIContext } from 'astro'
 import { getTokenChallenge, isAlmostExpired, refreshAbuseToken } from './abuse'
 import { getCachedToken, setCachedToken } from './tokenCache'
-import { checkGlobalRateLimit, checkSessionRateLimit, type RateLimitResult } from './ratelimit'
+import {
+  checkGlobalRateLimit,
+  checkSessionRateLimit,
+  type RateLimitResult,
+} from './ratelimit'
 
 export type Handler = (ctx: APIContext) => Promise<Response>
+export type ErrorMapper = (error: Response | unknown) => Response
 type Middleware = (ctx: APIContext, next: Handler) => Promise<Response>
 
 function compose(...middlewares: Middleware[]) {
-  return (handler: Handler) =>
-    middlewares.reduceRight<Handler>(
+  return (handler: Handler, onError?: ErrorMapper): Handler => {
+    const composed = middlewares.reduceRight<Handler>(
       (next, middleware) => ctx => middleware(ctx, next),
       handler
     )
+
+    if (!onError) {
+      return composed
+    }
+
+    return async ctx => {
+      try {
+        const res = await composed(ctx)
+        if (!res.ok) return onError(res)
+        return res
+      } catch (e) {
+        return onError(e)
+      }
+    }
+  }
 }
 
 const ensureAbuseToken: Middleware = async (ctx, next) => {

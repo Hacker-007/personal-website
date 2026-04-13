@@ -44,18 +44,31 @@ export function RedisTerminal() {
   }
 
   const executeCommand = async (command: string) => {
-    const response = await apiFetch('/api/redis', {
+    const body = await apiFetch('/api/redis', {
       method: 'POST',
       body: JSON.stringify({ command }),
     })
-      .then(res => res.json())
-      .then(RedisResponse)
 
+    if (!body.ok) {
+      setCommands(prev => [
+        ...prev,
+        {
+          command,
+          outputLines: [
+            '(error) ERR something went wrong; please try again later',
+          ],
+        },
+      ])
+
+      return
+    }
+
+    const response = await body.json().then(RedisResponse)
     if (response instanceof type.errors) {
       return
     }
 
-    setCommands(previousCommands => [...previousCommands, response])
+    setCommands(prev => [...prev, { command, ...response }])
   }
 
   return (

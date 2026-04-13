@@ -3,7 +3,7 @@ import { TokenChallenge, type TokenChallengeSolution } from '../types/token'
 
 async function solveChallenge(
   challenge: TokenChallenge
-): Promise<TokenChallengeSolution> {
+): Promise<TokenChallengeSolution | null> {
   return new Promise(resolve => {
     const worker = new Worker(
       new URL('../workers/pow.worker.ts', import.meta.url),
@@ -13,6 +13,11 @@ async function solveChallenge(
     worker.onmessage = ({ data }) => {
       worker.terminate()
       resolve(data.solution)
+    }
+
+    worker.onerror = () => {
+      worker.terminate()
+      resolve(null)
     }
 
     worker.postMessage(challenge)
@@ -42,11 +47,19 @@ export async function apiFetch(path: string, init?: RequestInit) {
     }
 
     const solution = await solveChallenge(challenge)
-    await fetch('/api/token', {
+    if (!solution) {
+      return new Response(null, { status: 500 })
+    }
+
+    const tokenRes = await fetch('/api/token', {
       method: 'POST',
       body: JSON.stringify({ challenge, solution }),
       credentials: 'include',
     })
+
+    if (!tokenRes.ok) {
+      return tokenRes
+    }
 
     return fetch(path, {
       ...init,

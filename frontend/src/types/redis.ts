@@ -5,7 +5,6 @@ export const RedisRequest = type({
 })
 
 export const RedisResponse = type({
-  command: 'string',
   outputLines: 'string[]',
 })
 
