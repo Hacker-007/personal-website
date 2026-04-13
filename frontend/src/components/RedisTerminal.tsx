@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { RedisResponse } from '../types/redis'
 import { type } from 'arktype'
 import { apiFetch } from '../utils/api'
+import CliSpinner from './CliSpinner'
 
 interface CommandSubmission {
   command: string
@@ -111,13 +112,15 @@ function CommandInput({ executeCommand }: CommandInputProps) {
   const [commandInput, setCommandInput] = useState('')
   const [history, setHistory] = useState<string[]>(['PING'])
   const [_, setHistoryIndex] = useState<number | null>(null)
+  const [pendingResult, setPendingResult] = useState(false)
 
   const handleKeyDown = async (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
     const command = commandInput.trim()
     if (event.key === 'Enter' && command !== '') {
-      await executeCommand(command)
+      setPendingResult(true)
+      await executeCommand(command).finally(() => setPendingResult(false))
       setCommandInput('')
       setHistory(previous => [...previous, command])
       setHistoryIndex(null)
@@ -158,13 +161,22 @@ function CommandInput({ executeCommand }: CommandInputProps) {
         </span>
 
         <input
-          className="text-text caret-accent w-full border-none bg-transparent outline-none focus:border-none focus:outline-none"
+          className="text-text caret-accent w-full border-none bg-transparent outline-none focus:border-none focus:outline-none disabled:opacity-50"
           placeholder="Type a command..."
+          disabled={pendingResult}
           value={commandInput}
           onChange={e => setCommandInput(e.currentTarget.value)}
           onKeyDown={handleKeyDown}
         />
       </p>
+      {pendingResult && (
+        <div className="border-l-accent/10 mt-1 border-l-2 pl-3">
+          <p className="text-muted flex items-center gap-1.5 text-sm">
+            <CliSpinner />
+            executing
+          </p>
+        </div>
+      )}
     </div>
   )
 }

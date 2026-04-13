@@ -1,6 +1,7 @@
 import type { APIContext } from 'astro'
 import { getTokenChallenge, isAlmostExpired, refreshAbuseToken } from './abuse'
 import { getCachedToken, setCachedToken } from './tokenCache'
+import { checkGlobalRateLimit, checkSessionRateLimit, type RateLimitResult } from './ratelimit'
 
 export type Handler = (ctx: APIContext) => Promise<Response>
 type Middleware = (ctx: APIContext, next: Handler) => Promise<Response>
@@ -40,5 +41,42 @@ const ensureAbuseToken: Middleware = async (ctx, next) => {
   })
 }
 
+function rateLimitHeaders(result: RateLimitResult): HeadersInit {
+  return {
+    'X-RateLimit-Limit': String(result.limit),
+    'X-RateLimit-Remaining': String(result.remaining),
+    'X-RateLimit-Reset': String(Math.ceil(result.reset / 1000)),
+    'Retry-After': String(Math.ceil((result.reset - Date.now()) / 1000)),
+  }
+}
+
+const globalRateLimit: Middleware = async (ctx, next) => {
+  const result = await checkGlobalRateLimit()
+  if (!result.success) {
+    return new Response('Too Many Requests', {
+      status: 429,
+      headers: rateLimitHeaders(result),
+    })
+  }
+
+  return next(ctx)
+}
+
+const sessionRateLimit: Middleware = async (ctx, next) => {
+  const result = await checkSessionRateLimit(ctx.locals.abuseToken.token)
+  if (!result.success) {
+    return new Response('Too Many Requests', {
+      status: 429,
+      headers: rateLimitHeaders(result),
+    })
+  }
+
+  return next(ctx)
+}
+
 // Pipeline of composed middlewares for the backend-for-frontend (BFF).
-export const bffPipeline = compose(ensureAbuseToken)
+export const bffPipeline = compose(
+  globalRateLimit,
+  ensureAbuseToken,
+  sessionRateLimit
+)

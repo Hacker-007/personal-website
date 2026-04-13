@@ -14,10 +14,29 @@ export default defineConfig({
   env: {
     schema: {
       API_URL: envField.string({ context: 'server', access: 'secret' }),
-      CF_ACCESS_CLIENT_ID: envField.string({ context: 'server', access: 'secret' }),
+      CF_ACCESS_CLIENT_ID: envField.string({
+        context: 'server',
+        access: 'secret',
+      }),
       CF_ACCESS_CLIENT_SECRET: envField.string({
         context: 'server',
         access: 'secret',
+      }),
+      UPSTASH_REDIS_REST_URL: envField.string({
+        context: 'server',
+        access: 'secret',
+      }),
+      UPSTASH_REDIS_REST_TOKEN: envField.string({
+        context: 'server',
+        access: 'secret',
+      }),
+      GLOBAL_MINUTE_RATE_LIMIT: envField.number({
+        context: 'server',
+        access: 'public',
+      }),
+      SESSION_MINUTE_RATE_LIMIT: envField.number({
+        context: 'server',
+        access: 'public',
       }),
     },
   },
