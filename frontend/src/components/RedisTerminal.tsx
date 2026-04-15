@@ -16,12 +16,7 @@ interface CommandInputProps {
 export function RedisTerminal() {
   const bodyRef = useRef<HTMLDivElement>(null)
   const shouldAutoScrollRef = useRef(true)
-  const [commands, setCommands] = useState<CommandSubmission[]>([
-    {
-      command: 'PING',
-      outputLines: ['PONG'],
-    },
-  ])
+  const [commands, setCommands] = useState<CommandSubmission[]>([])
 
   useEffect(() => {
     if (shouldAutoScrollRef.current && bodyRef.current) {
@@ -123,7 +118,7 @@ function SubmittedCommand({ command, outputLines }: CommandSubmission) {
 
 function CommandInput({ executeCommand }: CommandInputProps) {
   const [commandInput, setCommandInput] = useState('')
-  const [history, setHistory] = useState<string[]>(['PING'])
+  const [history, setHistory] = useState<string[]>([])
   const [_, setHistoryIndex] = useState<number | null>(null)
   const [pendingResult, setPendingResult] = useState(false)
 
@@ -179,7 +174,7 @@ function CommandInput({ executeCommand }: CommandInputProps) {
 
         <input
           className="text-text caret-accent w-full border-none bg-transparent outline-none focus:border-none focus:outline-none disabled:opacity-50"
-          placeholder="Type a command..."
+          placeholder={history.length === 0 ? "Try `PING`" : "Type a command"}
           disabled={pendingResult}
           value={commandInput}
           onChange={e => setCommandInput(e.currentTarget.value)}
