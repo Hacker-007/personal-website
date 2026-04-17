@@ -46,10 +46,8 @@ async fn main() -> AppResult<()> {
     dotenv().ok();
     let env = envy::from_env::<EnvironmentConfig>().expect("environment config should be valid");
     tracing_subscriber::fmt()
-        .compact()
-        .without_time()
-        .with_file(true)
-        .with_line_number(true)
+        .json()
+        .with_target(false)
         .with_env_filter(EnvFilter::from_default_env())
         .init();
 
@@ -90,4 +88,7 @@ fn create_app(env: EnvironmentConfig, args: CLIArguments) -> Router {
                 .allow_methods([Method::GET, Method::POST])
                 .allow_headers([AUTHORIZATION]),
         )
+        .layer(axum::middleware::from_fn(
+            middlewares::tracing::trace_request,
+        ))
 }
